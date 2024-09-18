@@ -13,3 +13,8 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+services:
+  location-service-url: https://prod-location-service.com/locations/id/
+  news-service-url: https://prod-news-service.com/news/location/
+

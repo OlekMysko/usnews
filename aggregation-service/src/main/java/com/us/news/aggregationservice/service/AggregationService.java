@@ -1,5 +1,6 @@
 package com.us.news.aggregationservice.service;
 
+import com.us.news.aggregationservice.config.ServiceConfig;
 import com.us.news.aggregationservice.model.AggregationResultDto;
 import com.us.news.common.model.CreatedLocationDto;
 import com.us.news.common.model.CreatedNewsDto;
@@ -19,17 +20,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AggregationService {
     private final RestTemplate restTemplate;
-
-    private static final String LOCATION_SERVICE_URL = "http://localhost:1602/locations/id/";
-    private static final String NEWS_SERVICE_URL = "http://localhost:1601/news/location/";
-
+    private final ServiceConfig serviceConfig;
 
     public ResponseWrapper<AggregationResultDto> getLocationWithNews(UUID locationId) {
         try {
-            CreatedLocationDto location = fetchData(LOCATION_SERVICE_URL + locationId,
+            CreatedLocationDto location = fetchData(serviceConfig.getLocationServiceUrl() + locationId,
                     new ParameterizedTypeReference<>() {});
 
-            List<CreatedNewsDto> newsList = fetchData( NEWS_SERVICE_URL + locationId,
+            List<CreatedNewsDto> newsList = fetchData( serviceConfig.getNewsServiceUrl() + locationId,
                     new ParameterizedTypeReference<>() {});
 
 
