@@ -15,6 +15,8 @@ spring:
     locations: classpath:db/migration
 
 services:
-  location-service-url: http://localhost:1602/locations/id/
-  news-service-url: http://localhost:1601/news/location/
-
+  location-service:
+    get-locations-list: http://localhost:1602/locations
+    location-details-by-id: http://localhost:1602/locations/id/
+  news-service:
+    news-by-location-id: http://localhost:1601/news/location/

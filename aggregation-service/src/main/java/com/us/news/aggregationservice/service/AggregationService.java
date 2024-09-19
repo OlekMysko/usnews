@@ -22,11 +22,11 @@ public class AggregationService {
 
     public ResponseWrapper<AggregationResultDto> getLocationWithNews(UUID locationId) {
         try {
-            CreatedLocationDto location = serviceClient.fetchData(serviceConfig.getLocationServiceUrl() + locationId,
+            CreatedLocationDto location = serviceClient.fetchData(serviceConfig.getLocationService().getLocationDetailsById() + locationId,
                     new ParameterizedTypeReference<ResponseWrapper<CreatedLocationDto>>() {
                     }).getData();
 
-            List<CreatedNewsDto> newsList = serviceClient.fetchData(serviceConfig.getNewsServiceUrl() + locationId,
+            List<CreatedNewsDto> newsList = serviceClient.fetchData(serviceConfig.getNewsService().getNewsByLocationId() + locationId,
                     new ParameterizedTypeReference<ResponseWrapper<List<CreatedNewsDto>>>() {
                     }).getData();
 
@@ -38,6 +38,21 @@ public class AggregationService {
             return new ResponseWrapper<>(true, "SUCCESS", aggregationResult);
         } catch (NullPointerException e) {
             return new ResponseWrapper<>(false, "Null value encountered: " + e.getMessage(), null);
+        } catch (RestClientException e) {
+            return new ResponseWrapper<>(false, "Error during service call: " + e.getMessage(), null);
+        } catch (Exception e) {
+            return new ResponseWrapper<>(false, "Unexpected error: " + e.getMessage(), null);
+        }
+    }
+
+    public ResponseWrapper<List<CreatedLocationDto>> getAllLocations() {
+        try {
+            List<CreatedLocationDto> locations = serviceClient.fetchData(
+                    serviceConfig.getLocationService().getGetLocationsList(),
+                    new ParameterizedTypeReference<ResponseWrapper<List<CreatedLocationDto>>>() {
+                    }).getData();
+
+            return new ResponseWrapper<>(true, "SUCCESS", locations);
         } catch (RestClientException e) {
             return new ResponseWrapper<>(false, "Error during service call: " + e.getMessage(), null);
         } catch (Exception e) {

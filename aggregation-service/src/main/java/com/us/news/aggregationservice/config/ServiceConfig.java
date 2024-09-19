@@ -10,6 +10,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "services")
 public class ServiceConfig {
-    private String locationServiceUrl;
-    private String newsServiceUrl;
+    private LocationService locationService;
+    private NewsService newsService;
+
+    @Setter
+    @Getter
+    public static class LocationService {
+        private String getLocationsList;
+        private String locationDetailsById;
+    }
+
+    @Setter
+    @Getter
+    public static class NewsService {
+        private String newsByLocationId;
+    }
 }
