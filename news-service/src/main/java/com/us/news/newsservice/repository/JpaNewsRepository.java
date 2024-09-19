@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface JpaNewsRepository extends JpaRepository<NewsEntity, UUID> {
-    NewsEntity findByNewsId(UUID newsId);
     List<NewsEntity> findByLocationId(UUID locationId);
+    NewsEntity findByTitleAndLocationId(String title, UUID locationId);
 }

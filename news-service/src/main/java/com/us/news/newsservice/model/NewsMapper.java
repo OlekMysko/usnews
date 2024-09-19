@@ -1,7 +1,10 @@
 package com.us.news.newsservice.model;
 
+import com.us.news.newsservice.model.api_response.Article;
 import org.springframework.stereotype.Component;
 import com.us.news.common.model.CreatedNewsDto;
+
+import java.util.UUID;
 
 @Component
 public class NewsMapper {
@@ -19,6 +22,14 @@ public class NewsMapper {
                 .title(newsEntity.getTitle())
                 .content(newsEntity.getContent())
                 .locationId(newsEntity.getLocationId())
+                .build();
+    }
+
+    public NewsEntity mapTo(Article article, UUID location) {
+        return NewsEntity.builder()
+                .title(article.getTitle())
+                .content(article.getContent())
+                .locationId(location)
                 .build();
     }
 }

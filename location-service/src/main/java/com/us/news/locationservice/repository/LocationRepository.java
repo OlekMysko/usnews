@@ -1,6 +1,7 @@
 package com.us.news.locationservice.repository;
 
 
+import com.us.news.common.model.LocationNameIdDto;
 import com.us.news.locationservice.model.LocationEntity;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface LocationRepository {
     Optional<LocationEntity> findByLocationId(UUID locationId);
 
     Optional<List<LocationEntity>> findAll();
+
+    Optional<List<LocationNameIdDto>> findAllLocationNamesAndIds();
 }

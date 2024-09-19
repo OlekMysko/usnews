@@ -32,4 +32,9 @@ public class SqlNewsRepository implements NewsRepository {
     public Optional<List<NewsEntity>> findAll() {
         return Optional.of(repository.findAll());
     }
+
+    @Override
+    public Optional<NewsEntity> findByTitleAndLocationId(String title, UUID locationId) {
+        return Optional.ofNullable(repository.findByTitleAndLocationId(title, locationId));
+    }
 }

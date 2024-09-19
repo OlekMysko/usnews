@@ -1,6 +1,7 @@
 package com.us.news.locationservice.repository;
 
 
+import com.us.news.common.model.LocationNameIdDto;
 import com.us.news.locationservice.model.LocationEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -38,5 +39,10 @@ public class SqlLocationRepository implements LocationRepository {
     @Override
     public Optional<List<LocationEntity>> findAll() {
         return Optional.of(repository.findAll());
+    }
+
+    @Override
+    public Optional<List<LocationNameIdDto>> findAllLocationNamesAndIds() {
+        return Optional.of(repository.findAllLocationNamesAndIds());
     }
 }

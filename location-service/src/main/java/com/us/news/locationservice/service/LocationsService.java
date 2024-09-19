@@ -1,5 +1,6 @@
 package com.us.news.locationservice.service;
 
+import com.us.news.common.model.LocationNameIdDto;
 import com.us.news.locationservice.model.CreateLocationDto;
 import com.us.news.common.model.CreatedLocationDto;
 import com.us.news.locationservice.model.LocationEntity;
@@ -82,7 +83,16 @@ public class LocationsService {
             return new ResponseWrapper<>(true, "Location deleted successfully.", deletedLocation);
         } else {
             logger.error("Location with ID {} not found.", id);
-            return new ResponseWrapper<>(false, "Location not found.", new CreatedLocationDto(id, "",0,0));
+            return new ResponseWrapper<>(false, "Location not found.", new CreatedLocationDto(id, "", 0, 0));
+        }
+    }
+
+    public ResponseWrapper<List<LocationNameIdDto>> findAllLocationNamesAndIds() {
+        List<LocationNameIdDto> locationNames = locationRepository.findAllLocationNamesAndIds().orElse(Collections.emptyList());
+        if (locationNames.isEmpty()) {
+            return new ResponseWrapper<>(false, "No location names found.", null);
+        } else {
+            return new ResponseWrapper<>(true, "Location names retrieved successfully.", locationNames);
         }
     }
 }

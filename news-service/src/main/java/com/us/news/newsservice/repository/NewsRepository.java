@@ -11,4 +11,5 @@ public interface NewsRepository {
     NewsEntity save(NewsEntity newsEntity);
     Optional<List<NewsEntity>> findByLocationId(UUID locationId);
     Optional<List<NewsEntity>> findAll();
+    Optional<NewsEntity> findByTitleAndLocationId(String title, UUID locationId);
 }

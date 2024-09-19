@@ -1,6 +1,7 @@
 package com.us.news.locationservice.controller;
 
 import com.us.news.common.model.CreatedLocationDto;
+import com.us.news.common.model.LocationNameIdDto;
 import com.us.news.locationservice.model.CreateLocationDto;
 import com.us.news.common.model.ResponseWrapper;
 import com.us.news.locationservice.service.LocationsService;
@@ -59,6 +60,13 @@ public class LocationController {
     public ResponseEntity<ResponseWrapper<CreatedLocationDto>> deleteLocation(@PathVariable UUID id) {
         ResponseWrapper<CreatedLocationDto> response = locationsService.deleteLocationById(id);
         HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(response, status);
+    }
+
+    @GetMapping(LOCATIONS_NAMES_AND_IDS)
+    public ResponseEntity<ResponseWrapper<List<LocationNameIdDto>>> getAllLocationNames() {
+        ResponseWrapper<List<LocationNameIdDto>> response = locationsService.findAllLocationNamesAndIds();
+        HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(response, status);
     }
 }
