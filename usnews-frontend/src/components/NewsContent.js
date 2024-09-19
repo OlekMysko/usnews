@@ -4,14 +4,15 @@ const NewsContent = ({ content }) => {
     return (
         <div
             style={{
-                marginTop: '20px',
                 padding: '20px',
-                backgroundColor: '#f0f0f0',
+                backgroundColor: '#ffffff',
                 border: '1px solid #ccc',
-                borderRadius: '8px',
-                maxWidth: '600px',
-                margin: '20px auto',
+                borderRadius: '10px',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                maxWidth: '500px',
                 textAlign: 'left',
+                lineHeight: '1.6',
+                fontSize: '16px',
             }}
         >
             <p>{content}</p>

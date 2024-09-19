@@ -12,8 +12,9 @@ const NewsItem = ({ title, content, onNewsClick, isSelected }) => {
                 border: '1px solid #ddd',
                 borderRadius: '8px',
                 transition: 'background-color 0.3s',
+                fontSize: '16px',
             }}
-            onMouseEnter={(e) => !isSelected && (e.currentTarget.style.backgroundColor = '#e0e0e0')}
+            onMouseEnter={(e) => !isSelected && (e.currentTarget.style.backgroundColor = '#dcdcdc')}
             onMouseLeave={(e) => !isSelected && (e.currentTarget.style.backgroundColor = '#f8f8f8')}
         >
             {title}
