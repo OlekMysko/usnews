@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Map from './Map';
 import axios from 'axios';
 import NewsList from './components/NewsList';
@@ -38,30 +38,35 @@ const App = () => {
     };
 
     const handleNewsClick = (content) => {
-        setSelectedNewsContent(content === selectedNewsContent ? null : content);
+        setSelectedNewsContent(content);
+    };
+
+    const handleBackClick = () => {
+        setSelectedNewsContent(null);
     };
 
     return (
-        <div style={{ margin: '20px' }}>
-            <h1 style={{ textAlign: 'center' }}>US News</h1>
-            <Map locations={locations} onLocationClick={handleLocationClick} />
+        <div>
+            <h1 style={{textAlign: 'center', marginTop: '20px'}}>US News</h1>
+            <Map locations={locations} onLocationClick={handleLocationClick}/>
             {selectedLocation && (
-                <div style={{ display: 'flex', marginTop: '20px' }}>
-                    <div style={{ flex: 1 }}>
-                        <h2>News for {selectedLocation.locationName}</h2>
-                        {news && news.length > 0 ? (
-                            <NewsList
-                                news={news}
-                                onNewsClick={handleNewsClick}
-                                selectedNewsContent={selectedNewsContent}
-                            />
-                        ) : (
-                            <p>No news available for this location.</p>
-                        )}
-                    </div>
-                    {selectedNewsContent && (
-                        <div style={{ flex: 1, marginLeft: '20px' }}>
-                            <NewsContent content={selectedNewsContent} />
+                <div className="container" style={{marginTop: '20px', textAlign: 'center'}}>
+                    <h2>News for {selectedLocation.locationName}</h2>
+                    {!selectedNewsContent ? (
+                        <>
+                            {news && news.length > 0 ? (
+                                <NewsList
+                                    news={news}
+                                    onNewsClick={handleNewsClick}
+                                />
+                            ) : (
+                                <p>No news available for this location.</p>
+                            )}
+                        </>
+                    ) : (
+                        <div>
+                            <button onClick={handleBackClick} style={{marginBottom: '20px'}}>Back to news list</button>
+                            <NewsContent content={selectedNewsContent}/>
                         </div>
                     )}
                 </div>

@@ -1,9 +1,9 @@
 import React from 'react';
 import NewsItem from './NewsItem';
 
-const NewsList = ({ news, onNewsClick, selectedNewsContent }) => {
+const NewsList = ({news, onNewsClick, selectedNewsContent}) => {
     return (
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
+        <ul style={{listStyleType: 'none', padding: 0}}>
             {news.map((item, index) => (
                 <NewsItem
                     key={index}
