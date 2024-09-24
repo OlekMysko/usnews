@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface LocationDetailsProvider {
     Optional<Coordinates> fetchCoordinates(String locationName);
+
+    Optional<String> fetchLocationByCoordinates(double lat, double lon);
 }

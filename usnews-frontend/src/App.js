@@ -19,6 +19,33 @@ const App = () => {
     const [selectedNewsContent, setSelectedNewsContent] = useState(null);
     const [addLocationMessage, setAddLocationMessage] = useState('');
 
+    const fetchNewsForUserLocation = async (latitude, longitude) => {
+        try {
+            const response = await axios.get(`${AGGREGATION_URL}/location-by-coordinates`, {
+                params: { lat: latitude, lon: longitude }
+            });
+            setSelectedLocation(response.data.data.location);
+            setNews(response.data.data.newsList);
+        } catch (error) {
+            console.error('Error fetching news for user location:', error);
+            setNews([]);
+        }
+    };
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    fetchNewsForUserLocation(latitude, longitude);
+                },
+                (error) => {
+                    console.error('Error fetching geolocation:', error);
+                }
+            );
+        }
+    }, []);
     useEffect(() => {
         const fetchLocationsFromAggregation = async () => {
             try {
@@ -62,9 +89,11 @@ const App = () => {
             if (response.data.success) {
                 const newLocationData = response.data.data;
                 setAddLocationMessage(`${LOCATION_SUCCESS} ${newLocation}`);
+                // Aktualizujemy stan locations i od razu dodajemy nową lokalizację do mapy
                 setLocations([...locations, newLocationData]);
-                fetchNewsForLocation(newLocationData.locationId);
+                // Ustawiamy nową lokalizację jako wybraną i pobieramy wiadomości
                 setSelectedLocation(newLocationData);
+                await fetchNewsForLocation(newLocationData.locationId);
             } else {
                 setAddLocationMessage(`${LOCATION_FAILED} ${response.data.details.message}`);
             }

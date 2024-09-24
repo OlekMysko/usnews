@@ -109,4 +109,69 @@ public class AggregationService {
             return fallback;
         }
     }
+
+    public ResponseWrapper<AggregationResultDto> getLocationWithNewsByCoordinates(final double lat, final double lon) {
+        try {
+            CreatedLocationDto createdLocation = fetchLocationByCoordinates(lat, lon);
+            List<CreatedNewsDto> newsList = fetchNewsByLocationId(createdLocation.getLocationId());
+            AggregationResultDto aggregationResult = buildAggregationResult(createdLocation, newsList);
+            return new ResponseWrapper<>(true, "SUCCESS", aggregationResult);
+        } catch (RestClientException e) {
+            return new ResponseWrapper<>(false, "Error during service call: " + e.getMessage(), null);
+        } catch (Exception e) {
+            return new ResponseWrapper<>(false, "Unexpected error: " + e.getMessage(), null);
+        }
+    }
+
+    private CreatedLocationDto fetchLocationByCoordinates(final double lat, final double lon) {
+        String location = locationDetailsProvider
+                .fetchLocationByCoordinates(lat, lon)
+                .orElseThrow(() -> new LocationNotFoundException("lat: " + lat + ", lon: " + lon));
+        try {
+            ResponseWrapper<CreatedLocationDto> responseWrapper = serviceClient.fetchData(
+                    serviceConfig.getLocationService().getLocationsUrl() + "/" + location
+                    , new ParameterizedTypeReference<>() {
+                    });
+            if (responseWrapper == null || !responseWrapper.isSuccess()) {
+                return addNewLocation(location, lat, lon);
+            }
+            return responseWrapper.getData();
+        } catch (RestClientResponseException e) {
+            if (e.getStatusCode().value() == 404) {
+                return addNewLocation(location, lat, lon);
+            }
+            throw new LocationNotFoundException("Request failed with status code: " + e.getStatusCode().value() + " and message: " + e.getMessage());
+        }
+    }
+
+    private List<CreatedNewsDto> fetchNewsByLocationId(final UUID locationId) {
+        return serviceClient.fetchData(serviceConfig.getNewsService().getNewsByLocationId() + locationId,
+                new ParameterizedTypeReference<ResponseWrapper<List<CreatedNewsDto>>>() {
+                }).getData();
+    }
+
+    private AggregationResultDto buildAggregationResult(final CreatedLocationDto location,
+                                                        final List<CreatedNewsDto> newsList) {
+        return AggregationResultDto.builder()
+                .location(location)
+                .newsList(newsList)
+                .build();
+    }
+
+    private CreatedLocationDto addNewLocation(String locationName, double lat, double lon) {
+        CreateLocationDto newLocation = new CreateLocationDto(locationName, lat, lon);
+
+        ResponseWrapper<CreatedLocationDto> responseWrapper = serviceClient.fetchData(
+                serviceConfig.getLocationService().getLocationsUrl(),
+                new ParameterizedTypeReference<>() {
+                },
+                newLocation
+        );
+
+        if (responseWrapper != null && responseWrapper.isSuccess()) {
+            return responseWrapper.getData();
+        } else {
+            throw new RuntimeException("Failed to create location: " + locationName);
+        }
+    }
 }

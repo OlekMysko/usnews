@@ -10,5 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "open-weather-api")
 public class WeatherApiConfig {
     private String apiKey;
-    private String apiUrl;
+    private String apiUrlLocationDetailsByLocationName;
+    private String apiUrlLocationDetailsByCoordinates;
 }

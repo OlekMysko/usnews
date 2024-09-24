@@ -22,10 +22,11 @@ public class LocationDetailsProviderImpl implements LocationDetailsProvider {
 
     @Override
     public Optional<Coordinates> fetchCoordinates(final String locationName) {
-        String url = String.format(apiConfig.getApiUrl(), locationName, apiConfig.getApiKey());
+        String url = String.format(apiConfig.getApiUrlLocationDetailsByLocationName(), locationName, apiConfig.getApiKey());
         ResponseEntity<List<OpenWeatherResponse>> response = restTemplate.exchange(url,
                 HttpMethod.GET, null,
-                new ParameterizedTypeReference<>() {});
+                new ParameterizedTypeReference<>() {
+                });
 
         List<OpenWeatherResponse> locations = response.getBody();
 
@@ -40,5 +41,17 @@ public class LocationDetailsProviderImpl implements LocationDetailsProvider {
                 openWeatherResponse.getLat(),
                 openWeatherResponse.getLon()
         );
+    }
+    @Override
+    public Optional<String> fetchLocationByCoordinates(final double lat, final double lon) {
+        String url = String.format(apiConfig.getApiUrlLocationDetailsByCoordinates(), lat, lon, apiConfig.getApiKey());
+        ResponseEntity<List<OpenWeatherResponse>> response = restTemplate.exchange(url,
+                HttpMethod.GET, null,
+                new ParameterizedTypeReference<>() {
+        });
+        List<OpenWeatherResponse> locationData = response.getBody();
+        return locationData != null && !locationData.isEmpty()
+                ? locationData.stream().findFirst().map(OpenWeatherResponse::getName)
+                : Optional.empty();
     }
 }

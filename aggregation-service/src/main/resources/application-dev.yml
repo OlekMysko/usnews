@@ -23,4 +23,5 @@ services:
 
 open-weather-api:
   api-key: 8dd10aa84818189acdb5e9f1a63986a5
-  api-url: https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=1&appid=%s
+  api-url-location-details-by-location-name: https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=1&appid=%s
+  api-url-location-details-by-coordinates: https://api.openweathermap.org/geo/1.0/reverse?lat=%f&lon=%f&limit=1&appid=%s

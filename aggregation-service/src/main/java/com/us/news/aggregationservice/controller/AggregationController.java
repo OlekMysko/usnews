@@ -40,4 +40,11 @@ public class AggregationController {
         HttpStatus status = response.isSuccess() ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
         return new ResponseEntity<>(response, status);
     }
+
+    @GetMapping(LOCATION_BY_COORDINATES)
+    public ResponseEntity<ResponseWrapper<AggregationResultDto>> getLocationByCoordinates(@RequestParam double lat, @RequestParam double lon) {
+        ResponseWrapper<AggregationResultDto> response = aggregationService.getLocationWithNewsByCoordinates(lat, lon);
+        HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(response, status);
+    }
 }

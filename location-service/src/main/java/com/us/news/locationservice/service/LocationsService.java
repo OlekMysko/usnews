@@ -57,8 +57,14 @@ public class LocationsService {
     }
 
     public Optional<CreatedLocationDto> findByLocationName(final String name) {
-        return name == null ? Optional.empty() : locationRepository.findByLocationName(name).map(locationMapper::mapTo);
+        if (name == null) {
+            return Optional.empty();
+        }
+        return locationRepository.findByLocationName(name)
+                .map(locationMapper::mapTo)
+                .or(Optional::empty);
     }
+
 
     public ResponseWrapper<List<CreatedLocationDto>> findAllLocations() {
         List<LocationEntity> locationEntities = locationRepository.findAll().orElse(Collections.emptyList());
