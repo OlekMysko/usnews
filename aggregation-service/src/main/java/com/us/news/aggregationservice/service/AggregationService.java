@@ -1,10 +1,13 @@
 package com.us.news.aggregationservice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.us.news.aggregationservice.api_provider.LocationDetailsProvider;
 import com.us.news.aggregationservice.api_provider.model.Coordinates;
 import com.us.news.aggregationservice.client.ServiceClient;
 import com.us.news.aggregationservice.config.ServiceConfig;
+import com.us.news.aggregationservice.ex.LocationNotFoundException;
 import com.us.news.aggregationservice.model.AggregationResultDto;
+import com.us.news.aggregationservice.util.ThrowingSupplier;
 import com.us.news.common.model.CreateLocationDto;
 import com.us.news.common.model.CreatedLocationDto;
 import com.us.news.common.model.CreatedNewsDto;
@@ -13,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.util.List;
 import java.util.UUID;
@@ -78,12 +82,31 @@ public class AggregationService {
             ).getData();
 
             return new ResponseWrapper<>(true, "Location created successfully.", createdLocation);
-        } catch (RestClientException e) {
-            return new ResponseWrapper<>(false, "Error during service call: " + e.getMessage(), null);
+
+        } catch (RestClientResponseException e) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object details = parseJson(() -> objectMapper.readValue(e.getResponseBodyAsString(), Object.class), e.getResponseBodyAsString());
+
+            return new ResponseWrapper<>(
+                    false,
+                    "Error during service call: " + e.getStatusCode().value(),
+                    null,
+                    details
+            );
         }
     }
 
     private Coordinates fetchCoordinates(String locationName) {
-        return locationDetailsProvider.fetchCoordinates(locationName).orElseThrow(() -> new RuntimeException("Location not found."));
+        return locationDetailsProvider
+                .fetchCoordinates(locationName)
+                .orElseThrow(() -> new LocationNotFoundException(locationName));
+    }
+
+    private Object parseJson(ThrowingSupplier<Object> parser, String fallback) {
+        try {
+            return parser.get();
+        } catch (Exception e) {
+            return fallback;
+        }
     }
 }

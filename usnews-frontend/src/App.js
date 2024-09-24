@@ -1,19 +1,28 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Map from './Map';
 import axios from 'axios';
 import NewsList from './components/NewsList';
 import NewsContent from './components/NewsContent';
+import AddLocationForm from './components/AddLocationForm';
+import {
+    LOCATION_FAILED,
+    LOCATION_SUCCESS,
+    LOCATION_NOT_FOUND,
+    AGGREGATION_URL,
+    LOCATION_ALREADY_EXISTS, LOCATION, LOCATIONS
+} from './components/constants';
 
 const App = () => {
     const [locations, setLocations] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [news, setNews] = useState([]);
     const [selectedNewsContent, setSelectedNewsContent] = useState(null);
+    const [addLocationMessage, setAddLocationMessage] = useState('');
 
     useEffect(() => {
         const fetchLocationsFromAggregation = async () => {
             try {
-                const response = await axios.get('/aggregation/locations');
+                const response = await axios.get(`${AGGREGATION_URL}${LOCATIONS}`);
                 setLocations(response.data.data);
             } catch (error) {
                 console.error('Error fetching locations:', error);
@@ -23,18 +32,20 @@ const App = () => {
     }, []);
 
     const fetchNewsForLocation = async (locationId) => {
+        setNews([]);
+        setSelectedNewsContent(null);
         try {
-            const response = await axios.get(`/aggregation/location/${locationId}`);
+            const response = await axios.get(`${AGGREGATION_URL}${LOCATION}${locationId}`);
             setNews(response.data.data.newsList);
         } catch (error) {
             console.error('Error fetching news:', error);
+            setNews([]);
         }
     };
 
     const handleLocationClick = (location) => {
         setSelectedLocation(location);
         fetchNewsForLocation(location.locationId);
-        setSelectedNewsContent(null);
     };
 
     const handleNewsClick = (content) => {
@@ -45,12 +56,41 @@ const App = () => {
         setSelectedNewsContent(null);
     };
 
+    const handleAddLocation = async (newLocation) => {
+        try {
+            const response = await axios.post(`${AGGREGATION_URL}/${newLocation}`);
+            if (response.data.success) {
+                const newLocationData = response.data.data;
+                setAddLocationMessage(`${LOCATION_SUCCESS} ${newLocation}`);
+                setLocations([...locations, newLocationData]);
+                fetchNewsForLocation(newLocationData.locationId);
+                setSelectedLocation(newLocationData);
+            } else {
+                setAddLocationMessage(`${LOCATION_FAILED} ${response.data.details.message}`);
+            }
+        } catch (error) {
+            if (error.response?.status === 400) {
+                const detailsMessage = error.response?.data?.details?.message || LOCATION_ALREADY_EXISTS;
+                setAddLocationMessage(`${LOCATION_FAILED} ${detailsMessage}`);
+            } else if (error.response?.status === 404) {
+                setAddLocationMessage(`${LOCATION_NOT_FOUND} ${newLocation}`);
+            } else {
+                const errorMessage = error.response?.data?.message || error.message;
+                setAddLocationMessage(`${LOCATION_FAILED} ${errorMessage}`);
+            }
+        }
+    };
+
     return (
         <div>
-            <h1 style={{textAlign: 'center', marginTop: '20px'}}>US News</h1>
-            <Map locations={locations} onLocationClick={handleLocationClick}/>
+            <h1 style={{ textAlign: 'center', marginTop: '20px' }}>US News</h1>
+            <Map locations={locations} onLocationClick={handleLocationClick} />
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <AddLocationForm onAddLocation={handleAddLocation} />
+                {addLocationMessage && <p>{addLocationMessage}</p>}
+            </div>
             {selectedLocation && (
-                <div className="container" style={{marginTop: '20px', textAlign: 'center'}}>
+                <div className="container" style={{ marginTop: '20px', textAlign: 'center' }}>
                     <h2>News for {selectedLocation.locationName}</h2>
                     {!selectedNewsContent ? (
                         <>
@@ -65,8 +105,8 @@ const App = () => {
                         </>
                     ) : (
                         <div>
-                            <button onClick={handleBackClick} style={{marginBottom: '20px'}}>Back to news list</button>
-                            <NewsContent content={selectedNewsContent}/>
+                            <button onClick={handleBackClick} style={{ marginBottom: '20px' }}>Back to news list</button>
+                            <NewsContent content={selectedNewsContent} />
                         </div>
                     )}
                 </div>
