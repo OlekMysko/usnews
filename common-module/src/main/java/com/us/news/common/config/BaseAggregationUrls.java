@@ -5,4 +5,5 @@ public interface BaseAggregationUrls {
     String LOCATIONS = "/locations";
     String LOCATION_NAME = "{locationName}";
     String LOCATION_BY_ID = "/location/{locationId}";
+    String LOCATION_BY_COORDINATES = "/location-by-coordinates";
 }
