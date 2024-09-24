@@ -1,6 +1,7 @@
 package com.us.news.locationservice.model;
 
 import com.us.news.common.model.CreatedLocationDto;
+import com.us.news.common.model.CreateLocationDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

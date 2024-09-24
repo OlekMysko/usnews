@@ -16,7 +16,7 @@ public class ServiceConfig {
     @Setter
     @Getter
     public static class LocationService {
-        private String getLocationsList;
+        private String locationsUrl;
         private String locationDetailsById;
     }
 

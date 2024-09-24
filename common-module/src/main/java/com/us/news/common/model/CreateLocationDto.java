@@ -1,4 +1,4 @@
-package com.us.news.locationservice.model;
+package com.us.news.common.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

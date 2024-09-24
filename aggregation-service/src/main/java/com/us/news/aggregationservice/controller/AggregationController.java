@@ -27,10 +27,17 @@ public class AggregationController {
         return new ResponseEntity<>(response, status);
     }
 
-    @GetMapping(LOCATIONS_ALL)
+    @GetMapping(LOCATIONS)
     public ResponseEntity<ResponseWrapper<List<CreatedLocationDto>>> getAllLocations() {
         ResponseWrapper<List<CreatedLocationDto>> response = aggregationService.getAllLocations();
         HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return new ResponseEntity<>(response, status);
+    }
+
+    @PostMapping(LOCATION_NAME)
+    public ResponseEntity<ResponseWrapper<CreatedLocationDto>> addLocation(@PathVariable String locationName) {
+        ResponseWrapper<CreatedLocationDto> response = aggregationService.addLocation(locationName);
+        HttpStatus status = response.isSuccess() ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
         return new ResponseEntity<>(response, status);
     }
 }

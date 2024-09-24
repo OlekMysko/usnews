@@ -1,8 +1,8 @@
 package com.us.news.locationservice.controller;
 
 import com.us.news.common.model.CreatedLocationDto;
+import com.us.news.common.model.CreateLocationDto;
 import com.us.news.common.model.LocationNameIdDto;
-import com.us.news.locationservice.model.CreateLocationDto;
 import com.us.news.common.model.ResponseWrapper;
 import com.us.news.locationservice.service.LocationsService;
 import lombok.AllArgsConstructor;

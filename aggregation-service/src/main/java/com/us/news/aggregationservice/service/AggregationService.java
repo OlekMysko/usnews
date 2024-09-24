@@ -1,8 +1,11 @@
 package com.us.news.aggregationservice.service;
 
+import com.us.news.aggregationservice.api_provider.LocationDetailsProvider;
+import com.us.news.aggregationservice.api_provider.model.Coordinates;
 import com.us.news.aggregationservice.client.ServiceClient;
 import com.us.news.aggregationservice.config.ServiceConfig;
 import com.us.news.aggregationservice.model.AggregationResultDto;
+import com.us.news.common.model.CreateLocationDto;
 import com.us.news.common.model.CreatedLocationDto;
 import com.us.news.common.model.CreatedNewsDto;
 import com.us.news.common.model.ResponseWrapper;
@@ -19,8 +22,9 @@ import java.util.UUID;
 public class AggregationService {
     private final ServiceClient serviceClient;
     private final ServiceConfig serviceConfig;
+    private final LocationDetailsProvider locationDetailsProvider;
 
-    public ResponseWrapper<AggregationResultDto> getLocationWithNews(UUID locationId) {
+    public ResponseWrapper<AggregationResultDto> getLocationWithNews(final UUID locationId) {
         try {
             CreatedLocationDto location = serviceClient.fetchData(serviceConfig.getLocationService().getLocationDetailsById() + locationId,
                     new ParameterizedTypeReference<ResponseWrapper<CreatedLocationDto>>() {
@@ -48,7 +52,7 @@ public class AggregationService {
     public ResponseWrapper<List<CreatedLocationDto>> getAllLocations() {
         try {
             List<CreatedLocationDto> locations = serviceClient.fetchData(
-                    serviceConfig.getLocationService().getGetLocationsList(),
+                    serviceConfig.getLocationService().getLocationsUrl(),
                     new ParameterizedTypeReference<ResponseWrapper<List<CreatedLocationDto>>>() {
                     }).getData();
 
@@ -58,5 +62,28 @@ public class AggregationService {
         } catch (Exception e) {
             return new ResponseWrapper<>(false, "Unexpected error: " + e.getMessage(), null);
         }
+    }
+
+    public ResponseWrapper<CreatedLocationDto> addLocation(final String locationName) {
+        try {
+            Coordinates coordinates = fetchCoordinates(locationName);
+            CreatedLocationDto createdLocation = serviceClient.fetchData(
+                    serviceConfig.getLocationService().getLocationsUrl(),
+                    new ParameterizedTypeReference<ResponseWrapper<CreatedLocationDto>>() {
+                    },
+                    new CreateLocationDto(
+                            coordinates.getLocationName(),
+                            coordinates.getLocationLatitude(),
+                            coordinates.getLocationLongitude())
+            ).getData();
+
+            return new ResponseWrapper<>(true, "Location created successfully.", createdLocation);
+        } catch (RestClientException e) {
+            return new ResponseWrapper<>(false, "Error during service call: " + e.getMessage(), null);
+        }
+    }
+
+    private Coordinates fetchCoordinates(String locationName) {
+        return locationDetailsProvider.fetchCoordinates(locationName).orElseThrow(() -> new RuntimeException("Location not found."));
     }
 }

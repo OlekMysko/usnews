@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface ServiceClient {
     <T> T fetchData(String url, ParameterizedTypeReference<T> responseType);
+    <T, R> T fetchData(String url, ParameterizedTypeReference<T> responseType, R requestData);
 }

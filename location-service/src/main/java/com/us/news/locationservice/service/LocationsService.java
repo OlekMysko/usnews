@@ -1,7 +1,7 @@
 package com.us.news.locationservice.service;
 
+import com.us.news.common.model.CreateLocationDto;
 import com.us.news.common.model.LocationNameIdDto;
-import com.us.news.locationservice.model.CreateLocationDto;
 import com.us.news.common.model.CreatedLocationDto;
 import com.us.news.locationservice.model.LocationEntity;
 import com.us.news.locationservice.model.LocationMapper;
