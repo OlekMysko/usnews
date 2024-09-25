@@ -1,5 +1,6 @@
-package com.us.news.aggregationservice.api_provider;
+package com.us.news.aggregationservice.api_provider.impl;
 
+import com.us.news.aggregationservice.api_provider.LocationDetailsProvider;
 import com.us.news.aggregationservice.api_provider.model.Coordinates;
 import com.us.news.aggregationservice.api_provider.model.OpenWeatherResponse;
 import com.us.news.aggregationservice.config.WeatherApiConfig;
