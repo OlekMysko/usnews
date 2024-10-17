@@ -20,6 +20,8 @@
 		<mysql.connector.version>8.0.33</mysql.connector.version>
 		<flyway.version>10.18.0</flyway.version>
 		<lombok.version>1.18.34</lombok.version>
+		<spock-core.version>2.4-M4-groovy-4.0</spock-core.version>
+		<spock-spring.version>2.4-M4-groovy-4.0</spock-spring.version>
 	</properties>
 
 	<dependencyManagement>
@@ -51,6 +53,19 @@
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.spockframework</groupId>
+				<artifactId>spock-core</artifactId>
+				<version>${spock-core.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.spockframework</groupId>
+				<artifactId>spock-spring</artifactId>
+				<version>${spock-spring.version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
